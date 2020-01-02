@@ -1,0 +1,178 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "IUX API USERS",
+      "description": " API CRUD de Usuarios",
+      "license": {
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT"
+      }
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/",
+    "tags": [
+      {
+        "name": "Api:Users",
+        "description": "API para el manejo de operaciones con usuarios"
+      }
+    ],
+    "schemes": [
+      "http"
+    ],
+    "consumes": [
+      "application/json"
+    ],
+    "produces": [
+      "application/json"
+    ],
+    "paths": {
+      "/users": {
+
+        "post": {
+          "tags": [
+            "Users"
+          ],
+          "description": "Create new Users in system",
+          "parameters": [
+            {
+              "name": "Users",
+              "in": "body",
+              "description": "User that we want to create",
+              "schema": {
+                "$ref": "#/definitions/Users"
+              }
+            }
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "New user is created",
+              "schema": {
+                "$ref": "#/definitions/Users"
+              }
+            }
+          }
+        }
+        ,
+
+        "get": {
+          "tags": [
+            "Users"
+          ],
+          "summary": "Get all Users  record in system",
+          "responses": {
+            "200": {
+              "description": "OK",
+              "schema": {
+                "$ref": "#/definitions/Users"
+              }
+            }
+          }
+        }
+      },
+      "/users/{usersId}": {
+        "parameters": [
+          {
+            "name": "UsersId",
+            "in": "path",
+            "required": true,
+            "description": "ID of Users that we want to find",
+            "type": "string"
+          }
+        ],
+        "get": {
+          "tags": [
+            "Users"
+          ],
+          "summary": "Get Users with given ID",
+          "responses": {
+            "200": {
+              "description": "User is found",
+              "schema": {
+                "$ref": "#/definitions/Users"
+              }
+            }
+          }
+        },
+        "delete": {
+          "summary": "Delete User with given ID",
+          "tags": [
+            "Users"
+          ],
+          "responses": {
+            "200": {
+              "description": "User is deleted",
+              "schema": {
+                "$ref": "#/definitions/Users"
+              }
+            }
+          }
+        },
+        "put": {
+          "summary": "Update user with give ID",
+          "tags": [
+            "Users"
+          ],
+          "parameters": [
+            {
+              "name": "user",
+              "in": "body",
+              "description": "User with new values of properties",
+              "schema": {
+                "$ref": "#/definitions/Users"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User is updated",
+              "schema": {
+                "$ref": "#/definitions/Users"
+              }
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "Users": {
+        "required": [
+          "NameUser",
+          "LastNameUser",
+          "EmailUser",
+          "PasswordUser",
+          "StatusUser",     
+          "DateBeginUser"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "uniqueItems": true
+          },
+          "NameUser": {
+            "type": "string",
+            "uniqueItems": true
+          },
+          "LastNameUser": {
+            "type": "string",
+            "uniqueItems": true
+          },
+          "EmailUser": {
+            "type": "string",
+            "uniqueItems": true
+          },
+          "StatusUser": {
+            "type": "boolean",
+            "uniqueItems": true
+          },
+          "DateBeginUser": {
+            "type": "date",
+            "uniqueItems": true
+          }
+        }
+      }
+    }
+  }

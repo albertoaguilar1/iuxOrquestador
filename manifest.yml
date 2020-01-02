@@ -1,0 +1,6 @@
+applications:
+- path: .
+  memory: 64M
+  instances: 1
+  name: orchestrator-api
+  buildpack: sdk-for-nodejs
