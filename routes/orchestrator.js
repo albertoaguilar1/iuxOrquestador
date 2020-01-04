@@ -28,12 +28,15 @@ api.get('/',function(req,res){
 
       // Contact routes
       api.route('/initiliaze')
-      .post(orchestratorController.initiliaze),
+      .post(authenticated,orchestratorController.initiliaze),
 
       
       api.route('/continue')
-      .post(orchestratorController.continueChat);
+      .post(authenticated,orchestratorController.continueChat);
     
+
+      api.route('/conversation')
+      .post(authenticated,orchestratorController.conversation)
 
     
 

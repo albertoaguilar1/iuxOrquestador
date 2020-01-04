@@ -27,29 +27,58 @@ exports.index = function (req, res) {
 };
 
 
+function mostrarPropiedades(config, skill) {
+  var resultado = ``;
+  for (var i in config) {
+    //objeto.hasOwnProperty se usa para filtrar las propiedades del objeto
+    
+      if(i===skill ){
+        if (config.hasOwnProperty(i)) {
+          resultado  = config[i];
+          console.log(resultado)
+  
+      }
+        break
+      }
+  
+  }
 
+  return resultado;
+}
+
+//servicio para inicializar la ocnversacion
 exports.initiliaze = function (req, res) {
 
-    console.log("initiliaze"+req.body.User);
+    console.log(""+req.body.User);
+    console.log(""+req.body.Museum);
+    console.log(""+req.body.IdSkill);
+
+    var username = req.body.User
+    var  museum = req.body.Museum
+    var  skill = req.body.IdSkill
+    
+   var resultado = mostrarPropiedades(config,skill)
     //IAM
     var assistant = new watson.AssistantV1({
-
+ 
       iam_apikey: config.wconv_apikey,
       version: config.wconv_version_date,
       url: config.wconv_url
     });
-    console.log("initiliaze"+assistant);
-    var username = req.body.User
+ 
   
     assistant.message({
-      workspace_id: config.wconv_workspaceId,
+      workspace_id: resultado,
       input: {'text': ''},
       context: { 
         'USERNAME': username,
-        "CANAL": "WEB"
+        "CANAL": "WEB",
+        "skill":  skill,
+       
       }
     },  function(err, response) {
      console.log(response)
+   
         res.send(response)
     });
   
@@ -59,7 +88,7 @@ exports.initiliaze = function (req, res) {
 
 
 
-
+// servicio para continuar la conversacion 
     exports.continueChat= function (req, res) {
     console.log("continueChat"+req.body.message);
     console.log("continueChat"+req.body.context);
@@ -67,9 +96,9 @@ exports.initiliaze = function (req, res) {
     var message = req.body.message;
     var saved_context = req.body.context;
 
+    var resultado = mostrarPropiedades(config,req.body.context.skill)
   
-  
-    console.log("sendMessage"+message);
+   
     //IAM
     var assistant = new watson.AssistantV1({
      
@@ -80,7 +109,7 @@ exports.initiliaze = function (req, res) {
   
     //IAM
     assistant.message({
-      workspace_id: config.wconv_workspaceId,
+      workspace_id:resultado,
       input: {'text': message},
       context: saved_context
     }, 
@@ -91,3 +120,5 @@ exports.initiliaze = function (req, res) {
      });
    
  };
+
+
