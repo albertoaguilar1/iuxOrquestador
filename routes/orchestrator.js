@@ -35,8 +35,7 @@ api.get('/',function(req,res){
       .post(authenticated,orchestratorController.continueChat);
     
 
-      api.route('/conversation')
-      .post(authenticated,orchestratorController.conversation)
+
 
     
 
