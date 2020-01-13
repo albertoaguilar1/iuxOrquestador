@@ -5,6 +5,8 @@ var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 // Cargamos los modelos para usarlos posteriormente
 
+var Conversation = require('../models/conversation.js');
+
 var config = require('../config');
 
 var watson = require('watson-developer-cloud');
@@ -28,7 +30,7 @@ exports.index = function (req, res) {
 
 
 function mostrarPropiedades(config, skill) {
-  var resultado = ``;
+  var resultado = "";
   for (var i in config) {
     //objeto.hasOwnProperty se usa para filtrar las propiedades del objeto
     
@@ -45,6 +47,97 @@ function mostrarPropiedades(config, skill) {
 
   return resultado;
 }
+
+
+const assistant = new watson.AssistantV1({
+ 
+  iam_apikey: config.wconv_apikey,
+  version: config.wconv_version_date,
+  url: config.wconv_url
+});
+
+exports.initiliaze2= (req, res) => {
+
+  console.log(""+req.body.User);
+  console.log(""+req.body.Museum);
+  console.log(""+req.body.IdSkill);
+  if(!req.body.IdSkill) {
+    return res.status(400).send({
+        message: "IdSkill req can not be empty"
+    });
+}
+if(!req.body.User) {
+  return res.status(400).send({
+      message: "User req can not be empty"
+  });
+}
+if(!req.body.Museum) {
+  return res.status(400).send({
+      message: "Museum req can not be empty"
+  });
+}
+
+  var username = req.body.User
+  var  museum = req.body.Museum
+  var  skill = req.body.IdSkill
+
+
+  var resultado = mostrarPropiedades(config,skill);
+
+if(!resultado) {
+  return res.status(400).send({
+      message: "IdSkill not found"
+  });
+}
+
+
+  const params={
+  workspace_id: resultado,
+  input: {'text': ''},
+  context: { 
+    'nameUser': username,
+    "canal": "WEB",
+    "skill":  skill
+  }
+  };
+
+
+
+    assistant.message(params, (err, response) => {
+    
+      if (err) {
+        console.error(err);
+        res.status(500).json(err);
+      } else {
+        
+        
+        var respuesta = saveConversation(response);
+        console.log("esperando vlaor "+respuesta)
+        res.json(response);
+
+
+
+     //  if(respuesta  === 'Success'){
+     //   res.json(response);
+      //   console.log(respuesta)
+
+        
+     // } else{
+    //    res.status(500).json(err);
+        
+     //   }
+      }
+
+
+    });
+
+};
+
+
+
+
+ 
+
 
 //servicio para inicializar la ocnversacion
 exports.initiliaze = function (req, res) {
@@ -122,3 +215,95 @@ exports.initiliaze = function (req, res) {
  };
 
 
+ function saveConversation(req) {
+
+
+   console.log("sec"+ req.output.text)
+
+var respuesta="";
+  var conversation = new Conversation();
+  conversation.nameUser = req.context.nameUser;
+  conversation.canal = req.context.canal;
+  conversation.skill = req.context.skill;
+  conversation.conversation_id = req.context.conversation_id;
+  conversation.dateBegin =  new Date();
+  conversation.conversacion =  req.output.text;
+  conversation.node = req.output.nodes_visited;
+  conversation.dialog_turn_counter = req.context.system.dialog_turn_counter;
+  conversation.dialog_request_counter = req.context.system.dialog_request_counter;
+
+
+
+ respuesta = conversation.save().then(resultados => {
+
+   if(resultados._id)
+   console.log("valor resultado"+resultados)
+   respuesta="Succes";
+   console.log("valor resultado"+respuesta)
+        return respuesta
+       
+      
+}).catch(err => {
+  console.log("valor err"+err)    
+  respuesta=err
+  console.log("valor resultado"+respuesta)
+    return respuesta
+   
+});
+console.log("valor resultado"+respuesta)
+return respuesta
+ 
+  };
+
+
+  function saveConversationUpdate(err,req) {
+    Conversation.findByIdAndUpdate({ _id: req.params.users_id }, {
+      NameUser : req.body.NameUser ? req.body.NameUser : users.NameUser,
+      nameUser : req.context.nameUser,
+      canal : req.context.canal,
+      skill : req.context.skill,
+      conversation_id : req.context.conversation_id
+
+    }, {new: true})   
+    .then(conversation => {
+
+    if(!conversation) {
+        return res.status(404).send({
+            message: "User not found with id " + req.params.users_id,
+                status:'404',
+                data: err
+        });
+    }
+    return res.status(200).send({
+        message: 'user Info updated',
+        status:"success",
+        data: conversation
+    });
+           
+}).catch(err => {
+    console.log("err"+err);
+    if(err.kind === 'ObjectId') {
+        return res.status(404).send({
+            message: "User not found with id " + req.params.users_id,
+            status:'404',
+            data: err
+        });                
+    }
+    return res.status(500).send({
+        message: "Error updating user with id " + req.params.users_id,
+        status:'500',
+        data: err
+    });
+});
+};
+
+
+
+
+  
+  
+   
+
+   
+
+ 

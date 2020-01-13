@@ -34,6 +34,11 @@ api.get('/',function(req,res){
       api.route('/continue')
       .post(authenticated,orchestratorController.continueChat);
     
+      api.route('/initiliaze2')
+      .post(authenticated,orchestratorController.initiliaze2);
+    
+
+
 
 
 
