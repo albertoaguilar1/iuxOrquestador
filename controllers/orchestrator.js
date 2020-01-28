@@ -10,7 +10,7 @@ var Conversation = require('../models/conversation.js');
 var config = require('../config');
 
 var watson = require('watson-developer-cloud');
-
+var fs = require('fs');
 
 
 // Handle index actions
@@ -55,6 +55,74 @@ const assistant = new watson.AssistantV1({
   version: config.wconv_version_date,
   url: config.wconv_url
 });
+
+
+
+const visualRecognition = new watson.VisualRecognitionV3({
+  version: config.wconv_version_date,
+  iam_apikey: config.wvisual_apikey,
+  url: config.wvisual_url
+});
+
+
+exports.visualRecognition= (req, res) => {
+  console.log("entra al metodo");
+  console.log("1"+req.body.images_file);
+  console.log("2"+req.body.threshold);
+  console.log("3"+req.body.classifier_ids);
+
+
+  if(!req.body.classifier_ids) {
+    return res.status(400).send({
+        message: "classifier_ids req can not be empty"
+    });
+}
+if(!req.body.images_file) {
+  return res.status(400).send({
+      message: "images_file req can not be empty"
+  });
+}
+if(!req.body.threshold) {
+  return res.status(400).send({
+      message: "threshold req can not be empty"
+  });
+}
+                    
+classifier_ids= req.body.classifier_ids
+
+var resultado = mostrarPropiedades(config,classifier_ids);
+
+console.log (resultado)
+
+var images_file= fs.createReadStream(req.body.images_file);
+var classifier_ids= [resultado];
+var threshold = req.body.threshold;
+
+
+var params = {
+	images_file: images_file,
+	classifier_ids: classifier_ids,
+	threshold: threshold
+};
+
+
+visualRecognition.classify(params, function(err, response) {
+
+	if (err) { 
+    res.json(err);
+	} else {
+
+ 
+
+    res.json(response);
+
+		console.log(JSON.stringify(response, null, 2))
+	}
+});
+}
+
+
+
 
 exports.initiliaze2= (req, res) => {
 

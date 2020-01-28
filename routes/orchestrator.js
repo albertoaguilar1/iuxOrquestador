@@ -27,6 +27,9 @@ api.get('/',function(req,res){
 
 
       // Contact routes
+      api.route('/visualRecognition')
+      .post(authenticated,orchestratorController.visualRecognition);
+
       api.route('/initiliaze')
       .post(authenticated,orchestratorController.initiliaze),
 
@@ -36,7 +39,9 @@ api.get('/',function(req,res){
     
       api.route('/initiliaze2')
       .post(authenticated,orchestratorController.initiliaze2);
-    
+
+  
+
 
 
 
