@@ -150,3 +150,5 @@
 ::1 - - [28/Jan/2020:01:32:55 +0000] "POST /api/visualRecognition HTTP/1.1" 200 300 "-" "PostmanRuntime/7.22.0"
 ::1 - - [28/Jan/2020:01:33:27 +0000] "POST /api/visualRecognition HTTP/1.1" 200 158 "-" "PostmanRuntime/7.22.0"
 ::1 - - [28/Jan/2020:01:37:26 +0000] "POST /api/visualRecognition HTTP/1.1" 200 208 "-" "PostmanRuntime/7.22.0"
+::1 - - [10/Feb/2020:18:14:10 +0000] "POST /api/initiliaze HTTP/1.1" 200 663 "-" "PostmanRuntime/7.22.0"
+::1 - - [10/Feb/2020:18:15:02 +0000] "POST /api/visualRecognition HTTP/1.1" 401 35 "-" "PostmanRuntime/7.22.0"
